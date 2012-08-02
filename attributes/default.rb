@@ -75,3 +75,4 @@ else
 end
 
 default[:postgresql][:listen_addresses] = "localhost"
+default[:postgresql][:client_authentication] = []
