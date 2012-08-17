@@ -74,5 +74,55 @@ else
   set[:postgresql][:dir]         = "/etc/postgresql/#{node[:postgresql][:version]}/main"
 end
 
+
+  <% if hash['type'] == 'local' -%>
+<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['method']} #{hash['options']}" %>
+  <% else -%>
+<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['cidr']} #{hash['method']} #{hash['options']}" %>
+  <% end -%>
+<% end -%>
+
+
+
 default[:postgresql][:listen_addresses] = "localhost"
-default[:postgresql][:client_authentication] = []
+default[:postgresql][:client_authentication] = [
+  
+  # If you change this first entry, you'll need to make sure that the 
+  # database superuser can access the database using some other method.
+  # Noninteractive access to all databases is required during automatic
+  # maintenance (autovacuum, daily cronjob, replication, and similar tasks.)
+
+  # Database administrative login by UNIX sockets
+  {
+    :type     => 'local',
+    :database => 'all',
+    :user     => 'postgres',
+    :method   => 'ident'
+  },
+
+  # "local" is for Unix domain socket connections only
+  {
+    :type     => 'local',
+    :database => 'all',
+    :user     => 'all',
+    :method   => 'ident'
+  },
+
+  # IPv4 local connections
+  {
+    :type     => 'host',
+    :database => 'all',
+    :user     => 'all',
+    :cidr     => '127.0.0.1/32',
+    :method   => 'md5'
+  },
+
+  # IPv6 local connections:
+  {
+    :type     => 'host',
+    :database => 'all',
+    :user     => 'all',
+    :cidr     => '::1/128',
+    :method   => 'md5'
+  }
+]
