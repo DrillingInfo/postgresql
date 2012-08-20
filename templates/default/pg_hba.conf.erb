@@ -59,7 +59,7 @@
 # or via the -i or -h command line switches.
 #
 
-<% node[:postgresql][:client_authentication].values.sort_by{|h| h[:position]).each do |hash| -%>
+<% node[:postgresql][:client_authentication].values.sort_by{|h| h[:position]}.each do |hash| -%>
   <% if hash['type'] == 'local' -%>
 <%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['method']} #{hash['options']}" %>
   <% else -%>
