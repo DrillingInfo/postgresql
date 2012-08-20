@@ -1,4 +1,4 @@
-#
+ #
 # Cookbook Name:: postgresql
 # Attributes:: postgresql
 #
@@ -74,55 +74,60 @@ else
   set[:postgresql][:dir]         = "/etc/postgresql/#{node[:postgresql][:version]}/main"
 end
 
-
-  <% if hash['type'] == 'local' -%>
-<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['method']} #{hash['options']}" %>
-  <% else -%>
-<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['cidr']} #{hash['method']} #{hash['options']}" %>
-  <% end -%>
-<% end -%>
-
-
-
 default[:postgresql][:listen_addresses] = "localhost"
-default[:postgresql][:client_authentication] = [
+default[:postgresql][:client_authentication] = {
   
-  # If you change this first entry, you'll need to make sure that the 
+  # Each authentication entry has a "key" field. This is not used by postgres, but
+  # allows you to easily merge and override these attributes from your 
+  # nodes, roles, etc.
+
+  # It also has a "position" field, since sequence matters in pg_hba.conf, and
+  # Ruby 1.8 hashes aren't ordered. Pro tip: if you want to insert a row, position can be a float!
+
+  # WARNING: If you change the "admin" entry, you'll need to make sure that the 
   # database superuser can access the database using some other method.
   # Noninteractive access to all databases is required during automatic
   # maintenance (autovacuum, daily cronjob, replication, and similar tasks.)
 
   # Database administrative login by UNIX sockets
-  {
-    :type     => 'local',
-    :database => 'all',
-    :user     => 'postgres',
-    :method   => 'ident'
-  },
+  :admin =>
+    {
+      :position => 1,
+      :type     => 'local',
+      :database => 'all',
+      :user     => 'postgres',
+      :method   => 'ident'
+    },
 
-  # "local" is for Unix domain socket connections only
-  {
-    :type     => 'local',
-    :database => 'all',
-    :user     => 'all',
-    :method   => 'ident'
-  },
+  # Unix domain socket connections only
+  :local_socket => 
+    {
+      :position => 2,
+      :type     => 'local',
+      :database => 'all',
+      :user     => 'all',
+      :method   => 'ident'
+    },
 
   # IPv4 local connections
-  {
-    :type     => 'host',
-    :database => 'all',
-    :user     => 'all',
-    :cidr     => '127.0.0.1/32',
-    :method   => 'md5'
-  },
+  :localhost_ipv4 =>
+    {
+      :position  => 3,
+      :type     => 'host',
+      :database => 'all',
+      :user     => 'all',
+      :cidr     => '127.0.0.1/32',
+      :method   => 'md5'
+    },
 
   # IPv6 local connections:
+  :localhost_ipv6 =>
   {
+    :position => 4,
     :type     => 'host',
     :database => 'all',
     :user     => 'all',
     :cidr     => '::1/128',
     :method   => 'md5'
   }
-]
+}
