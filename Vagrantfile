@@ -37,7 +37,8 @@ Vagrant::Config.run do |config|
           }
         }
         chef.run_list = details[:runlist_before] + [
-          "recipe[postgresql::server]"
+          "recipe[postgresql::server]",
+          "recipe[postgresql::sysctl]"
         ]
       end
     end
