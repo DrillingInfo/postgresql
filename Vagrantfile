@@ -4,8 +4,8 @@ require 'berkshelf/vagrant'
 
 ubuntu_runlist = [
   "recipe[apt]",
+  "recipe[postgresql::sysctl]",
   "recipe[postgresql::server]",
-  "recipe[postgresql::sysctl]"
 ]
 
 redhat_runlist = [
