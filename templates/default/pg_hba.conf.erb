@@ -59,25 +59,10 @@
 # or via the -i or -h command line switches.
 #
 
-
-
-
-# DO NOT DISABLE!
-# If you change this first entry you will need to make sure that the
-# database
-# super user can access the database using some other method.
-# Noninteractive
-# access to all databases is required during automatic maintenance
-# (autovacuum, daily cronjob, replication, and similar tasks).
-#
-# Database administrative login by UNIX sockets
-local   all         postgres                          ident
-
-# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
-
-# "local" is for Unix domain socket connections only
-local   all         all                               ident
-# IPv4 local connections:
-host    all         all         127.0.0.1/32          md5
-# IPv6 local connections:
-host    all         all         ::1/128               md5
+<% node[:postgresql][:client_authentication].values.sort_by{|h| h[:position]}.each do |hash| -%>
+  <% if hash['type'] == 'local' -%>
+<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['method']} #{hash['options']}" %>
+  <% else -%>
+<%= "#{hash['type']} #{hash['database']} #{hash['user']} #{hash['cidr']} #{hash['method']} #{hash['options']}" %>
+  <% end -%>
+<% end -%>
