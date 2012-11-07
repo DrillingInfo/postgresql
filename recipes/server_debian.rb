@@ -45,7 +45,7 @@ service "postgresql" do
     end
   end
   supports :restart => true, :status => true, :reload => true
-  action :nothing
+  action [:enable, :start]
 end
 
 directory node['postgresql']['unix_socket_directory'] do

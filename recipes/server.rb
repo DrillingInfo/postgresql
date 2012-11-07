@@ -27,7 +27,6 @@ include_recipe "postgresql::client"
 node.set_unless['postgresql']['password']['postgres'] = secure_password
 node.save unless Chef::Config['solo']
 
-
 # Include the right "family" recipe for installing the server
 # since they do things slightly differently.
 case node['platform']
@@ -41,7 +40,7 @@ template node['postgresql']['hba_file'] do
   source "pg_hba.conf.erb"
   owner "postgres"
   group "postgres"
-  mode 0600
+  mode 00600
   notifies :reload, resources(:service => "postgresql"), :immediately
 end
 
