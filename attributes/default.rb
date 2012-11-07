@@ -163,7 +163,7 @@ default['postgresql']['log_min_error_statement']='error'
 default['postgresql']['log_min_duration_statement']=-1
 
 #Authentication
-default [:postgresql][:client_authentication] = {  
+default[:postgresql][:client_authentication] = {  
   # Each authentication entry has a "key" field. This is not used by postgres, but
   # allows you to easily merge and override these attributes from your 
   # nodes, roles, etc.
